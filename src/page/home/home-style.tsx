@@ -5,10 +5,12 @@ export const style = StyleSheet.create({
     backgroundColor: "#040617",
     width: "100%",
     height: "100%",
+    borderRadius: 25,
   },
   alert: {
     position: "absolute",
-    top: 20,
+    flex: -1,
+    top: 40,
     right: 15,
   },
   viewInfo: {
@@ -71,5 +73,8 @@ export const style = StyleSheet.create({
     columnGap: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#D4D4D4",
+  },
+  textList: {
+    color: "#000",
   },
 });

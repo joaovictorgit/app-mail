@@ -6,17 +6,21 @@ import {
   SafeAreaView,
   ScrollView,
   Modal,
+  Pressable,
 } from "react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import EmailModal from "../../components/modal-email/email-modal";
+import MessageModal from "../../components/modal-message/message-modal";
 import api from "../../service/service";
 import { style } from "./home-style";
 
 const HomeScreen = () => {
-  const [totalEmails, setTotalEmails] = useState(0);
+  const [selectEmail, setSelectEmail] = useState("");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
-  const [listEmails, setListEmails] = useState([]);
+  const [listEmails, setListEmails] = useState<string[]>([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -25,22 +29,32 @@ const HomeScreen = () => {
 
   const getEmails = async () => {
     try {
-      /*await api.get("/email").then((response: any) => {
+      await api.get("/email").then((response: any) => {
         setListEmails(response.data);
-      });*/
+      });
     } catch (error: unknown) {
       console.log(error);
     }
   };
 
-  const addEmail = () => {
-    setTotalEmails(totalEmails + 1);
-    setEmail("teste@gmail.com");
+  const addEmail = async () => {
+    setListEmails([...listEmails, email]);
+    /*try {
+      await api
+        .post("/email", {
+          email: email,
+        })
+        .then((response: any) => {
+          let aux: any = listEmails;
+          aux.push(email);
+          setListEmails(aux);
+        });
+    } catch (error: unknown) {}*/
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     getEmails();
-  }, []);
+  }, []);*/
 
   return (
     <View style={style.globalView}>
@@ -50,26 +64,57 @@ const HomeScreen = () => {
         color="#fff"
         style={style.alert}
       />
+
       <View style={style.viewInfo}>
-        <Text style={style.title}>Total de Emails: {totalEmails}</Text>
+        <Text style={style.title}>Total de Emails: {listEmails.length}</Text>
         <View style={style.viewButtons}>
-          <TouchableOpacity onPress={addEmail} style={style.touchButton}>
+          <Pressable
+            onPress={() => {
+              setModalVisible(true);
+              setSelectEmail("email");
+            }}
+            style={style.touchButton}
+          >
             <Text style={style.textButtons}>Adicionar Email</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.touchButton}>
+          </Pressable>
+          <Pressable
+            style={style.touchButton}
+            onPress={() => {
+              setModalVisible(true);
+              setSelectEmail("message");
+            }}
+          >
             <Text style={style.textButtons}>Adicionar Mensagem</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.touchButton}>
+          </Pressable>
+          <Pressable style={style.touchButton}>
             <Text style={style.textButtons}>Enviar Email</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           <Modal
+            animationType="slide"
             transparent={true}
             visible={isModalVisible}
             onRequestClose={() => {
               setModalVisible(!isModalVisible);
             }}
-          ></Modal>
+          >
+            {selectEmail === "email" ? (
+              <EmailModal
+                toggleModal={toggleModal}
+                email={email}
+                setEmail={setEmail}
+                addEmail={addEmail}
+              />
+            ) : (
+              <MessageModal
+                toggleModal={toggleModal}
+                title={title}
+                setTitle={setTitle}
+                message={message}
+                setMessage={setMessage}
+              />
+            )}
+          </Modal>
         </View>
       </View>
       <View style={style.viewEmail}>
@@ -77,10 +122,10 @@ const HomeScreen = () => {
         <SafeAreaView style={style.safeArea}>
           <ScrollView style={style.scrollView}>
             {listEmails
-              ? listEmails.map((email: any, index: number) => (
+              ? listEmails.map((emailList: any, index: number) => (
                   <View style={style.listEmail} key={index}>
                     <Icon name="ios-mail" color="#00000060" size={20} />
-                    <Text>{email}</Text>
+                    <Text style={style.textList}>{emailList}</Text>
                   </View>
                 ))
               : null}
