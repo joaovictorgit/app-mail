@@ -1,0 +1,11 @@
+version: "3.0"
+services:
+  app-send-email:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-send-email
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./app-send-email/app

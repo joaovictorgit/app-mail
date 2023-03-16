@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   SafeAreaView,
   ScrollView,
   Modal,
