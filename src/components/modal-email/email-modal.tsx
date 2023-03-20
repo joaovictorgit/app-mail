@@ -19,6 +19,7 @@ const EmailModal = (props: any) => {
           onPress={toggleModal}
           style={style.iconClose}
         />
+        <Text>Email:</Text>
         <TextInput
           value={!email ? email : null}
           onChangeText={setEmail}

@@ -3,10 +3,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { style } from "./message-modal-style";
 
 const MessageModal = (props: any) => {
-  const { toggleModal, title, setTitle, message, setMessage } = props;
+  const { toggleModal, title, setTitle, message, setMessage, addMessage } =
+    props;
   const registerMessage = () => {
-    console.log(title);
-    console.log(message);
+    addMessage();
     toggleModal();
   };
   return (
@@ -19,11 +19,13 @@ const MessageModal = (props: any) => {
           onPress={toggleModal}
           style={style.iconClose}
         />
+        <Text>Titulo:</Text>
         <TextInput
           value={!title ? title : null}
           onChangeText={setTitle}
           style={style.textInput}
         />
+        <Text>Menssagem:</Text>
         <TextInput
           value={!message ? message : null}
           onChangeText={setMessage}

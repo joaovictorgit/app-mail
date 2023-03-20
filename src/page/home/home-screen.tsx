@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   SafeAreaView,
   ScrollView,
   Modal,
@@ -16,6 +15,8 @@ import api from "../../service/service";
 import { style } from "./home-style";
 
 const HomeScreen = () => {
+  const [messageColor, setMessageColor] = useState("");
+  const [icon, setIcon] = useState("");
   const [selectEmail, setSelectEmail] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -27,43 +28,70 @@ const HomeScreen = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const getEmails = async () => {
+  const addMessage = async () => {
     try {
-      await api.get("/email").then((response: any) => {
-        setListEmails(response.data);
-      });
+      await api
+        .post("/message", {
+          title: title,
+          message: message,
+        })
+        .then((response: any) => {
+          console.log(response.data.result);
+          setIcon("ios-checkmark-circle");
+          setMessageColor("Menssagem adicionada com sucesso!");
+        });
     } catch (error: unknown) {
       console.log(error);
+      setMessageColor("Erro!");
+      setIcon("ios-alert-circle");
     }
   };
 
   const addEmail = async () => {
-    setListEmails([...listEmails, email]);
-    /*try {
+    //setListEmails([...listEmails, email]);
+    try {
       await api
         .post("/email", {
           email: email,
         })
         .then((response: any) => {
-          let aux: any = listEmails;
-          aux.push(email);
-          setListEmails(aux);
+          console.log(response.data);
+          setListEmails([...listEmails, email]);
+          setIcon("ios-checkmark-circle");
+          setMessageColor("Email adicionado com sucesso!");
         });
-    } catch (error: unknown) {}*/
+    } catch (error: unknown) {
+      console.log(error);
+      setMessageColor("Erro!");
+      setIcon("ios-alert-circle");
+    }
   };
 
-  /*useEffect(() => {
-    getEmails();
-  }, []);*/
+  const sendEmails = async () => {
+    try {
+      await api.post("/send").then((response: any) => {
+        console.log(response.data);
+        setMessageColor("Emails enviados com sucesso!");
+      });
+    } catch (error: unknown) {
+      console.log(error);
+      setMessageColor("Erro!");
+      setIcon("ios-alert-circle");
+    }
+  };
 
   return (
     <View style={style.globalView}>
-      <Icon
-        name="ios-alert-circle"
-        size={30}
-        color="#fff"
-        style={style.alert}
-      />
+      <View style={style.alert}>
+        {icon !== null ? (
+          <Icon
+            name={icon}
+            size={30}
+            color={icon === "ios-alert-circle" ? "#c7d31d" : "#4fdf16"}
+          />
+        ) : null}
+        <Text style={style.alertText}>{messageColor}</Text>
+      </View>
 
       <View style={style.viewInfo}>
         <Text style={style.title}>Total de Emails: {listEmails.length}</Text>
@@ -86,7 +114,7 @@ const HomeScreen = () => {
           >
             <Text style={style.textButtons}>Adicionar Mensagem</Text>
           </Pressable>
-          <Pressable style={style.touchButton}>
+          <Pressable style={style.touchButton} onPress={() => sendEmails()}>
             <Text style={style.textButtons}>Enviar Email</Text>
           </Pressable>
 
@@ -112,6 +140,7 @@ const HomeScreen = () => {
                 setTitle={setTitle}
                 message={message}
                 setMessage={setMessage}
+                addMessage={addMessage}
               />
             )}
           </Modal>
