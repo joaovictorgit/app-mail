@@ -13,4 +13,4 @@ Para baixar e instalar o projeto, siga os passos:
 
 ## Rodando a Aplicação
 
-![conversation-gif](./images/send-email.gif)
+![conversation-gif](./assets/send-email.gif)
