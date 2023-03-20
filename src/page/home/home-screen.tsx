@@ -6,11 +6,13 @@ import {
   ScrollView,
   Modal,
   Pressable,
+  Alert,
 } from "react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import EmailModal from "../../components/modal-email/email-modal";
-import MessageModal from "../../components/modal-message/message-modal";
+import AlertView from "../../components/alert/alert";
+import EmailView from "../../components/email/email";
+import InfoView from "../../components/info/info";
 import api from "../../service/service";
 import { style } from "./home-style";
 
@@ -26,6 +28,24 @@ const HomeScreen = () => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const createAlertSendEmails = () => {
+    Alert.alert(
+      "Alerta!",
+      "Você deseja enviar esta menssagem para os emails listados ?",
+      [
+        {
+          text: "Não",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: () => sendEmails(),
+        },
+      ]
+    );
   };
 
   const addMessage = async () => {
@@ -82,85 +102,26 @@ const HomeScreen = () => {
 
   return (
     <View style={style.globalView}>
-      <View style={style.alert}>
-        {icon !== null ? (
-          <Icon
-            name={icon}
-            size={30}
-            color={icon === "ios-alert-circle" ? "#c7d31d" : "#4fdf16"}
-          />
-        ) : null}
-        <Text style={style.alertText}>{messageColor}</Text>
-      </View>
+      <AlertView icon={icon} messageColor={messageColor} />
 
-      <View style={style.viewInfo}>
-        <Text style={style.title}>Total de Emails: {listEmails.length}</Text>
-        <View style={style.viewButtons}>
-          <Pressable
-            onPress={() => {
-              setModalVisible(true);
-              setSelectEmail("email");
-            }}
-            style={style.touchButton}
-          >
-            <Text style={style.textButtons}>Adicionar Email</Text>
-          </Pressable>
-          <Pressable
-            style={style.touchButton}
-            onPress={() => {
-              setModalVisible(true);
-              setSelectEmail("message");
-            }}
-          >
-            <Text style={style.textButtons}>Adicionar Mensagem</Text>
-          </Pressable>
-          <Pressable style={style.touchButton} onPress={() => sendEmails()}>
-            <Text style={style.textButtons}>Enviar Email</Text>
-          </Pressable>
-
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isModalVisible}
-            onRequestClose={() => {
-              setModalVisible(!isModalVisible);
-            }}
-          >
-            {selectEmail === "email" ? (
-              <EmailModal
-                toggleModal={toggleModal}
-                email={email}
-                setEmail={setEmail}
-                addEmail={addEmail}
-              />
-            ) : (
-              <MessageModal
-                toggleModal={toggleModal}
-                title={title}
-                setTitle={setTitle}
-                message={message}
-                setMessage={setMessage}
-                addMessage={addMessage}
-              />
-            )}
-          </Modal>
-        </View>
-      </View>
-      <View style={style.viewEmail}>
-        <Text style={style.titleList}>Lista de Email</Text>
-        <SafeAreaView style={style.safeArea}>
-          <ScrollView style={style.scrollView}>
-            {listEmails
-              ? listEmails.map((emailList: any, index: number) => (
-                  <View style={style.listEmail} key={index}>
-                    <Icon name="ios-mail" color="#00000060" size={20} />
-                    <Text style={style.textList}>{emailList}</Text>
-                  </View>
-                ))
-              : null}
-          </ScrollView>
-        </SafeAreaView>
-      </View>
+      <InfoView
+        listEmails={listEmails}
+        setModalVisible={setModalVisible}
+        setSelectEmail={setSelectEmail}
+        createAlertSendEmails={createAlertSendEmails}
+        isModalVisible={isModalVisible}
+        selectEmail={selectEmail}
+        toggleModal={toggleModal}
+        title={title}
+        setTitle={setTitle}
+        email={email}
+        setEmail={setEmail}
+        message={message}
+        setMessage={setMessage}
+        addEmail={addEmail}
+        addMessage={addMessage}
+      />
+      <EmailView listEmails={listEmails} />
     </View>
   );
 };
